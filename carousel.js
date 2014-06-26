@@ -16,9 +16,7 @@ define([
 
 	function slider ( element, options ) {
 
-        // if ( !(this.dom = $(selector))[0] ) return console.log("Can't find the dom through "+selector);
         var $wrap = this.$wrap = $(element);
-        // console.log($dom.find(".ui-carousel-item"))
 
         $.extend(this, {
             $inner : $wrap.find(".ui-carousel-inner"),
@@ -30,7 +28,7 @@ define([
             // webkitTransitionDuration
             webkitTransitionDuration : 300,
             // 控点节点列表
-            dots : [],
+            $dots : [],
             // 当前帧数
             current : 0,
             // 当前距离
@@ -53,23 +51,23 @@ define([
 
     $.extend(slider.prototype, {
         to : function ( index, noanim ) {
-            // noanim 为无动画效果
-            // if ( index >= 0 && index < this.$item.length ) {
 
-                if ( this.current > this.$item.length ) return;
-                // var time = !noanim ? this.webkitTransitionDuration : 0;
-                this.$inner.css({
-                    "-webkitTransitionDuration" : (!noanim ? this.webkitTransitionDuration : 0)+"ms",
-                    "-webkitTransform" : 'translate3d('+-(this.width*(this.current=index))+'px, 0, 0)'
+            if ( this.current > this.$item.length ) return;
+            var that = this;
+            // 等待$inner渲染出来
+            setTimeout(function() {
+
+                that.$inner.css({
+                    "-webkitTransitionDuration" : (!noanim ? that.webkitTransitionDuration : 0)+"ms",
+                    "-webkitTransform" : 'translate3d('+-(that.width*(that.current=index))+'px, 0, 0)'
                 });
-                this.currentpos = -index * this.width;
+                that.currentpos = -index * that.width;
+                // 当无动画切换时，不会触发`webkitTransitionEnd`事件
+                // 需在这里更新一下dots ui
+                if ( noanim ) _updateDotsUI.call(that)
 
-                /*setClass(delClass(this.dots, "curr")[this.current = index], "curr");
-                this.currentpos = -index * this.width*/
-            // }
-            /*if ( index >= this.$item.length ) {
-                this.current = 0;
-            }*/
+            }, 0);
+
         }
     });
 
@@ -94,6 +92,16 @@ define([
                 }
             }
         }
+    }();
+
+    // 更新dots控点UI
+    var _updateDotsUI = function () {
+
+        var CALSS = "ui-carousel-dots-curr";
+        return function () {
+            this.$dots.removeClass(CALSS).eq(this.current).addClass(CALSS);
+        }
+
     }();
 
     // 初始化事件逻辑
@@ -174,14 +182,13 @@ define([
 	        }, !!1)
         	.on("webkitTransitionEnd", function (evt) {
 
-	            // evt.stopPropagation();
 	            _autoLoop.start.call(that);
 
 	            that.$inner.css({"-webkitTransitionDuration" : '0'});
 
 	            // 到了第一张的临时节点
 	            if ( that.current >= framesLen ) {
-	                // setClass(delClass(that.dots, "curr")[that.current = 0], "curr");
+	                // setClass(delClass(that.$dots, "curr")[that.current = 0], "curr");
 	                // that.currentpos = that.current = 0
 	                that.$inner.css({
 	                    "-webkitTransform" : 'translate3d('+(that.currentpos = that.current = 0)+'px, 0px, 0px)'
@@ -191,16 +198,13 @@ define([
 	            if ( that.current <= -1 ) {
 	                // that.current = framesLen-1
 	                // that.currentpos = (that.current = framesLen-1) * that.width
-	                // setClass(delClass(that.dots, "curr")[that.current = framesLen-1], "curr");
+	                // setClass(delClass(that.$dots, "curr")[that.current = framesLen-1], "curr");
 	                that.$inner.css({
 	                    "-webkitTransform" : 'translate3d('+(that.currentpos = -(that.current = framesLen-1) * that.width)+'px, 0px, 0px)'
 	                });
 	            }
 
-	            that.dots
-	                .removeClass("ui-carousel-dots-curr")
-	                .eq(that.current).addClass("ui-carousel-dots-curr");
-	            // setClass(delClass(that.dots, "curr")[that.current], "curr");
+	            _updateDotsUI.call(that);
 
 	        }, !!1);
 
@@ -238,8 +242,8 @@ define([
 
         that.$wrap.append(dotstmpl)
         // collection dots node
-        that.dots = that.$wrap.find(".ui-carousel-dots-i")
-        that.dots.eq(that.current).addClass("ui-carousel-dots-curr");
+        that.$dots = that.$wrap.find(".ui-carousel-dots-i")
+        that.$dots.eq(that.current).addClass("ui-carousel-dots-curr");
     }
 
    $.Carousel = slider;
@@ -249,13 +253,17 @@ define([
             var $this   = $(this);
             var data    = $this.data('carousel');
 
-            var options = $.extend({}, $this.data(), option||{});
+            var options = $.extend({}, $this.data(), typeof option == "object" ? option : {});
             var action  = typeof option == 'string' ? option : options.slide;
 
             if ( !data ) {
                 $this.data('carousel', (data = new slider(this, options)))
             }
+
+            if ( typeof option == "number" ) data.to(option, !!1);
         })
     }
+
+    $("#carousel").carousel(1)
 
 });
