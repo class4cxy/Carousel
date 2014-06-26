@@ -1,0 +1,39 @@
+.ui-carousel{
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    background-color: #000;
+}
+.ui-carousel-inner{
+    display: none;
+    /*display: -webkit-box;*/
+}
+.ui-carousel-item{
+    -webkit-box-flex:1;
+}
+.ui-carousel-item-last{
+    left: -100%;
+    top: 0;
+    position: relative;
+}
+.ui-carousel-dots{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 10px;
+}
+.ui-carousel-dots-i{
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    background-color: #fff;
+    border: 1px #0088cc solid;
+    border-radius: 5px;
+    margin: 0 2px;
+    text-indent: -9999px
+}
+.ui-carousel-dots-curr{
+    background-color: #0088cc;
+    border: 1px #fff solid;
+}
