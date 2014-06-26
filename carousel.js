@@ -14,36 +14,19 @@ define([
 
 	var slice = Array.prototype.slice;
 
-	// TODO 建议interface函数放置在底层文件
-	/*function interface () {
-
-		var extender = arguments[0];
-
-		$.each( slice.call(arguments, 1), function (k, obj) {
-			
-			$.each( obj, function (name, val) {
-				
-				extender[name] === undefined && (extender[name] = val);
-				
-			});
-			
-		});
-		
-		return extender;
-	}*/
-
 	function slider ( element, options ) {
 
         // if ( !(this.dom = $(selector))[0] ) return console.log("Can't find the dom through "+selector);
-        var $dom = this.dom = $(element);
+        var $wrap = this.$wrap = $(element);
         // console.log($dom.find(".ui-carousel-item"))
 
         $.extend(this, {
+            $inner : $wrap.find(".ui-carousel-inner"),
         	// son item 内部子节点
-            frames : $dom.find(".ui-carousel-item"),
+            $item : $wrap.find(".ui-carousel-item"),
             // 容器宽度
             // TODO 如果有需要可以做成自适应
-            width : $dom.parent().width(),
+            width : $wrap.width(),
             // webkitTransitionDuration
             webkitTransitionDuration : 300,
             // 控点节点列表
@@ -96,11 +79,11 @@ define([
     $.extend(slider.prototype, {
         to : function ( index, noanim ) {
             // noanim 为无动画效果
-            // if ( index >= 0 && index < this.frames.length ) {
+            // if ( index >= 0 && index < this.$item.length ) {
 
-                if ( this.current > this.frames.length ) return;
+                if ( this.current > this.$item.length ) return;
                 // var time = !noanim ? this.webkitTransitionDuration : 0;
-                this.dom.css({
+                this.$inner.css({
                     "-webkitTransitionDuration" : (!noanim ? this.webkitTransitionDuration : 0)+"ms",
                     "-webkitTransform" : 'translate3d('+-(this.width*(this.current=index))+'px, 0, 0)'
                 });
@@ -109,7 +92,7 @@ define([
                 /*setClass(delClass(this.dots, "curr")[this.current = index], "curr");
                 this.currentpos = -index * this.width*/
             // }
-            /*if ( index >= this.frames.length ) {
+            /*if ( index >= this.$item.length ) {
                 this.current = 0;
             }*/
         }
@@ -145,10 +128,10 @@ define([
             starttime,
             touchstartpos,
             speed = .4,
-            framesLen = that.frames.length,
+            framesLen = that.$item.length,
             max = that.width*(framesLen-1);
 
-        that.dom
+        that.$inner
         	.on("touchstart", function (evt) {
 
 	            evt.stopPropagation();
@@ -172,7 +155,7 @@ define([
 	            // that.currentpos += (e.pageX - startpos)/(that.currentpos > 0 || that.currentpos < -max ? 3 : 1);
 	            startpos = e.pageX;
 
-	            that.dom.css({
+	            that.$inner.css({
 	                "-webkitTransform" : 'translate3d('+that.currentpos+'px, 0px, 0px)'
 	            });
 
@@ -214,13 +197,13 @@ define([
 	            // evt.stopPropagation();
 	            _autoLoop.start.call(that);
 
-	            that.dom.css({"-webkitTransitionDuration" : '0'});
+	            that.$inner.css({"-webkitTransitionDuration" : '0'});
 
 	            // 到了第一张的临时节点
 	            if ( that.current >= framesLen ) {
 	                // setClass(delClass(that.dots, "curr")[that.current = 0], "curr");
 	                // that.currentpos = that.current = 0
-	                that.dom.css({
+	                that.$inner.css({
 	                    "-webkitTransform" : 'translate3d('+(that.currentpos = that.current = 0)+'px, 0px, 0px)'
 	                });
 	            }
@@ -229,7 +212,7 @@ define([
 	                // that.current = framesLen-1
 	                // that.currentpos = (that.current = framesLen-1) * that.width
 	                // setClass(delClass(that.dots, "curr")[that.current = framesLen-1], "curr");
-	                that.dom.css({
+	                that.$inner.css({
 	                    "-webkitTransform" : 'translate3d('+(that.currentpos = -(that.current = framesLen-1) * that.width)+'px, 0px, 0px)'
 	                });
 	            }
@@ -252,24 +235,24 @@ define([
     // 初始化UI（样式/生成节点）
     function _prepareForUI ( that ) {
 
-        var framesLen = that.frames.length;
+        var framesLen = that.$item.length;
 
-        that.dom.css({
+        that.$inner.css({
             position : "relative",
             width : 100*(framesLen+2)+'%',
             display : "-webkit-box"
         });
-        // console.log(that.frames)
+        // console.log(that.$item)
 
-        // 复制前后节点，用户无限循环轮播
-        var firstNode = that.frames.eq(0).clone()[0];
-        var lastNode = that.frames.eq(framesLen-1).clone().addClass("ui-carousel-item-last")[0];
-        // var lastNode = addClass(that.frames[framesLen-1].cloneNode(1), "ui-carousel-item-last");
+        // 用于无限循环轮播
+        var firstNode = that.$item[0].cloneNode(1);
+        var lastNode = that.$item[framesLen-1].cloneNode(1);
+        // var lastNode = addClass(that.$item[framesLen-1].cloneNode(1), "ui-carousel-item-last");
 
         // 插入复制的节点
-        that.dom.append([firstNode, lastNode]);
+        that.$inner.append([firstNode, lastNode]);
 
-        /*setCSS(that.frames, {
+        /*setCSS(that.$item, {
             float : "left",
             width: Math.floor((100/itemsLeng)*100)/100+"%"
         });*/
@@ -282,9 +265,9 @@ define([
         }
         dotstmpl += '</p>';
 
-        that.dom.parent().append(dotstmpl)
+        that.$wrap.append(dotstmpl)
         // collection dots node
-        that.dots = that.dom.parent().find(".ui-carousel-dots-i")
+        that.dots = that.$wrap.find(".ui-carousel-dots-i")
         that.dots.eq(that.current).addClass("ui-carousel-dots-curr");
         // that.dots.eq(that.current).addClass("ui-carousel-dots-curr")
     }
