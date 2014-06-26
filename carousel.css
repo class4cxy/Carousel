@@ -12,7 +12,7 @@
 .ui-carousel-item{
     -webkit-box-flex:1;
 }
-.ui-carousel-item:nth-last-child(1){
+.ui-carousel-item-last{
     left: -100%;
     top: 0;
     position: relative;
