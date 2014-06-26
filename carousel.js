@@ -49,27 +49,23 @@ define([
         _autoLoop.start.call(this)
     }
 
-    $.extend(slider.prototype, {
-        to : function ( index, noanim ) {
+    slider.prototype.to = function ( index, noanim ) {
+        if ( this.current > this.$item.length ) return;
+        var that = this;
+        // 等待$inner渲染出来
+        setTimeout(function() {
 
-            if ( this.current > this.$item.length ) return;
-            var that = this;
-            // 等待$inner渲染出来
-            setTimeout(function() {
+            that.$inner.css({
+                "-webkitTransitionDuration" : (!noanim ? that.webkitTransitionDuration : 0)+"ms",
+                "-webkitTransform" : 'translate3d('+-(that.width*(that.current=index))+'px, 0, 0)'
+            });
+            that.currentpos = -index * that.width;
+            // 当无动画切换时，不会触发`webkitTransitionEnd`事件
+            // 需在这里更新一下dots ui
+            if ( noanim ) _updateDotsUI.call(that)
 
-                that.$inner.css({
-                    "-webkitTransitionDuration" : (!noanim ? that.webkitTransitionDuration : 0)+"ms",
-                    "-webkitTransform" : 'translate3d('+-(that.width*(that.current=index))+'px, 0, 0)'
-                });
-                that.currentpos = -index * that.width;
-                // 当无动画切换时，不会触发`webkitTransitionEnd`事件
-                // 需在这里更新一下dots ui
-                if ( noanim ) _updateDotsUI.call(that)
-
-            }, 0);
-
-        }
-    });
+        }, 0);
+    }
 
     // 启动/关闭 自动轮换，便于其他地方调用
     var _autoLoop = function () {
