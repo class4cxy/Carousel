@@ -27,8 +27,6 @@ define([
             width : $wrap.width(),
             // webkitTransitionDuration
             webkitTransitionDuration : 300,
-            // 控点节点列表
-            $dots : [],
             // 当前帧数
             current : 0,
             // 当前距离
@@ -38,9 +36,15 @@ define([
             // 激活自动轮播，默认激活
             // 自动轮播激活前提是激活了circle轮播方式
             enableAutoLoop : !!1,
+            // 激活触点导航控件
+            enableDots : !!1,
             // 自动轮换时长
             autoLoopDuration : 5e3
-        }, options)
+        }, options);
+
+        // 少于等于一帧时
+        // 不启动自动轮播&circle轮播
+        if ( this.$item.length <= 1 ) this.enableCircleLoop = this.enableAutoLoop = !!0;
         // initialize ui
         _prepareForUI(this);
         // initialize event
@@ -95,7 +99,7 @@ define([
 
         var CALSS = "ui-carousel-dots-curr";
         return function () {
-            this.$dots.removeClass(CALSS).eq(this.current).addClass(CALSS);
+            this.enableDots && this.$dots.removeClass(CALSS).eq(this.current).addClass(CALSS);
         }
 
     }();
@@ -134,9 +138,7 @@ define([
                 } else {
                     that.currentpos += (e.pageX - startpos)/(that.currentpos > 0 || that.currentpos < -max ? 3 : 1);
                 }
-	            // that.currentpos += e.pageX - startpos;
-	            // that.enableCircleLoop || ( that.currentpos = that.currentpos/(that.currentpos > 0 || that.currentpos < -max ? 3 : 1) )
-	            // that.currentpos += (e.pageX - startpos)/(that.currentpos > 0 || that.currentpos < -max ? 3 : 1);
+
 	            startpos = e.pageX;
 
 	            that.$inner.css({
@@ -228,18 +230,21 @@ define([
             that.$inner.append([firstNode, lastNode]);
         }
 
-        // create navigator
-        var dotstmpl = '<p class="ui-carousel-dots">';
+        // 检测是否激动触点导航控件
+        if ( that.enableDots ) {
+            // create navigator
+            var dotstmpl = '<p class="ui-carousel-dots">';
 
-        for ( var i = 0; i < framesLen; i++ ) {
-            dotstmpl += '<a class="ui-carousel-dots-i">'+ (i+1) +'</a>'
+            for ( var i = 0; i < framesLen; i++ ) {
+                dotstmpl += '<a class="ui-carousel-dots-i">'+ (i+1) +'</a>'
+            }
+            dotstmpl += '</p>';
+
+            that.$wrap.append(dotstmpl)
+            // collection dots node
+            that.$dots = that.$wrap.find(".ui-carousel-dots-i")
+            that.$dots.eq(that.current).addClass("ui-carousel-dots-curr");
         }
-        dotstmpl += '</p>';
-
-        that.$wrap.append(dotstmpl)
-        // collection dots node
-        that.$dots = that.$wrap.find(".ui-carousel-dots-i")
-        that.$dots.eq(that.current).addClass("ui-carousel-dots-curr");
     }
 
    $.Carousel = slider;
@@ -260,6 +265,6 @@ define([
         })
     }
 
-    $("#carousel").carousel(1)
+    $("#carousel").carousel()
 
 });
