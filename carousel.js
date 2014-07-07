@@ -4,23 +4,23 @@
  * summary : a slider depend on zetpo, which work for mobile
  */
 define([
-	"../zepto/zepto",
-	"../zepto/event",
-	"../zepto/data"
+    "../zepto/zepto",
+    "../zepto/event",
+    "../zepto/data"
 ], function() { 'use stick';
 
-	// if exist
-	if ( $([]).carousel ) return;
+    // if exist
+    if ( $([]).carousel ) return;
 
-	var slice = Array.prototype.slice;
+    var slice = Array.prototype.slice;
 
-	function slider ( element, options ) {
+    function slider ( element, options ) {
 
         var $wrap = this.$wrap = $(element);
 
         $.extend(this, {
             $inner : $wrap.find(".ui-carousel-inner"),
-        	// son item 内部子节点
+            // son item 内部子节点
             $item : $wrap.find(".ui-carousel-item"),
             // 容器宽度
             // TODO 如果有需要可以做成自适应
@@ -70,6 +70,29 @@ define([
 
         }, 0);
     }
+    slider.prototype.clear = function () {
+
+        this.$inner.off()
+
+        if ( this.enableDots ) {
+            delete this.$dots;
+            this.$wrap.find(".ui-carousel-dots").remove();
+        }
+
+        if ( this.enableAutoLoop ) {
+            _autoLoop.stop.call(this)
+        }
+
+        if ( this.enableCircleLoop ) {
+            var len = this.$item.length;
+            this.$item.eq(len-1).remove()
+            this.$item.eq(len-2).remove()
+        }
+
+        this.$inner = null;
+        this.$item = null;
+        this.$wrap = null;
+    }
 
     // 启动/关闭 自动轮换，便于其他地方调用
     var _autoLoop = function () {
@@ -115,23 +138,23 @@ define([
             max = that.width*(framesLen-1);
 
         that.$inner
-        	.on("touchstart", function (evt) {
+            .on("touchstart", function (evt) {
 
-	            evt.stopPropagation();
-	            evt.preventDefault();
-	            if ( that.current <= -1 || that.current >= framesLen ) return;
-	            var e = evt.touches[0];
-	            touchstartpos = startpos = e.pageX;
-	            starttime = +new Date;
+                evt.stopPropagation();
+                evt.preventDefault();
+                if ( that.current <= -1 || that.current >= framesLen ) return;
+                var e = evt.touches[0];
+                touchstartpos = startpos = e.pageX;
+                starttime = +new Date;
 
-	        }, !!1)
+            }, !!1)
 
-        	.on("touchmove", function (evt) {
+            .on("touchmove", function (evt) {
 
-	            _autoLoop.stop.call(that);
-	            if ( that.current <= -1 || that.current >= framesLen ) return;
-	            var e = evt.touches[0];
-	            evt.preventDefault();
+                _autoLoop.stop.call(that);
+                if ( that.current <= -1 || that.current >= framesLen ) return;
+                var e = evt.touches[0];
+                evt.preventDefault();
 
                 if ( that.enableCircleLoop ) {
                     that.currentpos += e.pageX - startpos;
@@ -139,72 +162,72 @@ define([
                     that.currentpos += (e.pageX - startpos)/(that.currentpos > 0 || that.currentpos < -max ? 3 : 1);
                 }
 
-	            startpos = e.pageX;
+                startpos = e.pageX;
 
-	            that.$inner.css({
-	                "-webkitTransform" : 'translate3d('+that.currentpos+'px, 0px, 0px)'
-	            });
+                that.$inner.css({
+                    "-webkitTransform" : 'translate3d('+that.currentpos+'px, 0px, 0px)'
+                });
 
-	        }, !!1)
+            }, !!1)
 
-        	.on("touchend", function (evt) {
+            .on("touchend", function (evt) {
 
-	            if ( that.current <= -1 || that.current >= framesLen ) return;
-	            // 时间间隔
-	            ///var duration = +new Date + starttime;
-	            // 距离
-	            var distance = evt.changedTouches[0].pageX-touchstartpos;
-	            // 距离绝对值
-	            var absdistance = Math.abs(distance);
-	            // 方向
-	            var diration = distance/absdistance;
-	            // 滑动范围[0,lenght-1]
-	            // [注]当激活enableCircleLoop时
-	            // isInRange一直为true
-	            // 表示不受范围控制
-	            var isInRange = that.enableCircleLoop ? !!1 : diration > 0 ? that.current > 0 : that.current < framesLen-1;
-	            // 是否滚动过半
-	             var isHalf = absdistance >= Math.floor(that.width/2);
-	            // 手指滑动速度
-	            var ss = absdistance / (+new Date-starttime);
+                if ( that.current <= -1 || that.current >= framesLen ) return;
+                // 时间间隔
+                ///var duration = +new Date + starttime;
+                // 距离
+                var distance = evt.changedTouches[0].pageX-touchstartpos;
+                // 距离绝对值
+                var absdistance = Math.abs(distance);
+                // 方向
+                var diration = distance/absdistance;
+                // 滑动范围[0,lenght-1]
+                // [注]当激活enableCircleLoop时
+                // isInRange一直为true
+                // 表示不受范围控制
+                var isInRange = that.enableCircleLoop ? !!1 : diration > 0 ? that.current > 0 : that.current < framesLen-1;
+                // 是否滚动过半
+                 var isHalf = absdistance >= Math.floor(that.width/2);
+                // 手指滑动速度
+                var ss = absdistance / (+new Date-starttime);
 
-	           // log(that.width)
-	           // log(ss)
-	            that.to(function(){
-	                var index = that.current - ((speed < ss || isHalf) && isInRange ? diration : 0);
-	                // console.log(index)
-	                // that.currentpos = -index * that.width;
-	                return index
-	            }());
+               // log(that.width)
+               // log(ss)
+                that.to(function(){
+                    var index = that.current - ((speed < ss || isHalf) && isInRange ? diration : 0);
+                    // console.log(index)
+                    // that.currentpos = -index * that.width;
+                    return index
+                }());
 
-	        }, !!1)
-        	.on("webkitTransitionEnd", function (evt) {
+            }, !!1)
+            .on("webkitTransitionEnd", function (evt) {
 
-	            _autoLoop.start.call(that);
+                _autoLoop.start.call(that);
 
-	            that.$inner.css({"-webkitTransitionDuration" : '0'});
+                that.$inner.css({"-webkitTransitionDuration" : '0'});
 
-	            // 到了第一张的临时节点
-	            if ( that.current >= framesLen ) {
-	                // setClass(delClass(that.$dots, "curr")[that.current = 0], "curr");
-	                // that.currentpos = that.current = 0
-	                that.$inner.css({
-	                    "-webkitTransform" : 'translate3d('+(that.currentpos = that.current = 0)+'px, 0px, 0px)'
-	                });
-	            }
-	            // 到了最后一张的临时节点
-	            if ( that.current <= -1 ) {
-	                // that.current = framesLen-1
-	                // that.currentpos = (that.current = framesLen-1) * that.width
-	                // setClass(delClass(that.$dots, "curr")[that.current = framesLen-1], "curr");
-	                that.$inner.css({
-	                    "-webkitTransform" : 'translate3d('+(that.currentpos = -(that.current = framesLen-1) * that.width)+'px, 0px, 0px)'
-	                });
-	            }
+                // 到了第一张的临时节点
+                if ( that.current >= framesLen ) {
+                    // setClass(delClass(that.$dots, "curr")[that.current = 0], "curr");
+                    // that.currentpos = that.current = 0
+                    that.$inner.css({
+                        "-webkitTransform" : 'translate3d('+(that.currentpos = that.current = 0)+'px, 0px, 0px)'
+                    });
+                }
+                // 到了最后一张的临时节点
+                if ( that.current <= -1 ) {
+                    // that.current = framesLen-1
+                    // that.currentpos = (that.current = framesLen-1) * that.width
+                    // setClass(delClass(that.$dots, "curr")[that.current = framesLen-1], "curr");
+                    that.$inner.css({
+                        "-webkitTransform" : 'translate3d('+(that.currentpos = -(that.current = framesLen-1) * that.width)+'px, 0px, 0px)'
+                    });
+                }
 
-	            _updateDotsUI.call(that);
+                _updateDotsUI.call(that);
 
-	        }, !!1);
+            }, !!1);
 
     }
 
@@ -214,10 +237,10 @@ define([
         var framesLen = that.$item.length;
 
         that.$inner.css({
-            position : "relative",
             width : 100*(framesLen+(that.enableCircleLoop?2:0))+'%',
             display : "-webkit-box"
         });
+
         // console.log(that.$item)
         if ( that.enableCircleLoop ) {
             // 用于无限循环轮播
@@ -247,24 +270,32 @@ define([
         }
     }
 
-   $.Carousel = slider;
+    $.Carousel = slider;
 
     $.fn.carousel = function (option) {
         return this.each(function () {
             var $this   = $(this);
             var data    = $this.data('carousel');
 
-            var options = $.extend({}, $this.data(), typeof option == "object" ? option : {});
-            var action  = typeof option == 'string' ? option : options.slide;
+            if ( option === "clear" ) {
+                if ( data ) {
+                    $this.data('carousel', null);
+                    data.clear();
+                    data = null;
+                }
+            } else {
 
-            if ( !data ) {
-                $this.data('carousel', (data = new slider(this, options)))
+                var options = $.extend({}, $this.data(), typeof option == "object" ? option : {});
+                // console.log($this)
+                // var action  = typeof option == 'string' ? option : options.slide;
+
+                if ( !data ) {
+                    $this.data('carousel', (data = new slider(this, options)))
+                }
+
+                if ( typeof option === "number" ) data.to(option, !!1);
             }
-
-            if ( typeof option == "number" ) data.to(option, !!1);
         })
     }
-
-    $("#carousel").carousel()
 
 });
