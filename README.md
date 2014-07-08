@@ -4,20 +4,29 @@
 	<li><strong>支持`有终点`跟`无终点`轮播模式；</strong></li>
 	<li><strong>支持响应式；</strong></li>
 	<li><strong>支持自动轮播，[注]：自动轮播依赖于`无终点`模式；</strong></li>
-	<li><strong>支持指定帧数初始化。</strong></li>
+	<li><strong>支持指定帧数初始化；</strong></li>
+	<li><strong>支持销毁初始化对象。</strong></li>
 </ol>
 
 <h3>[API]</h3>
 
 <h4>JS 对象方法</h4>
 <p>
-```html
+<pre>
 /**
  * index[number] 初始化状态切换到的帧数
  * noanim[boolean] 切换过程是否需要动画
  */
 $("#carousel").carousel(index, noanim);
-```
+</pre>
+</p>
+<p>
+<pre>
+/**
+ * 销毁操作
+ */
+$("#carousel").carousel('clear');
+</pre>
 </p>
 <h4>HTML 初始化</h4>
 <p>
@@ -34,6 +43,6 @@ $("#carousel").carousel(index, noanim);
         <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/4/"></li>
     </ul>
 </div>
-```
+
 </p>
 <h4>CSS <a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">carousel.css</a></h4>
