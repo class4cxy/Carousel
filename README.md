@@ -50,8 +50,8 @@ $(".carousel").carousel('clear');
  * data-auto-loop-duratio 自动轮播时间间隔，默认5s
  * /
 </pre>
-<a href="https://github.com/class4cxy/Carousel/blob/master/demo.html">demo.html</a>
+<a href="https://github.com/class4cxy/Carousel/blob/master/demo.html">[code]demo.html</a>
 </p>
 
 <h4>CSS 初始化</h4>
-<p><a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">carousel.css</a></p>
+<p><a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">[code]carousel.css</a></p>
