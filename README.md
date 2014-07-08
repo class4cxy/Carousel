@@ -49,15 +49,10 @@ $(".carousel").carousel('clear');
  * data-enable-dots 激活触点导航，默认激活
  * data-auto-loop-duratio 自动轮播时间间隔，默认5s
  * /
-<div class="ui-carousel" id="carousel" data-enable-circle-loop="true" data-enable-auto-loop="true" data-enable-dots="true" data-auto-loop-duration="5000">
-    <ul class="ui-carousel-inner">
-        <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/1/"></li>
-        <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/2/"></li>
-        <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/3/"></li>
-        <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/4/"></li>
-    </ul>
-</div>
 </pre>
+<br>
+<a href="https://github.com/class4cxy/Carousel/blob/master/demo.html">demo.html</a>
 </p>
 
-<h4>CSS <a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">carousel.css</a></h4>
+<h4>CSS 初始化</h4>
+<p><a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">carousel.css</a></p>
