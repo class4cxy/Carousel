@@ -14,23 +14,34 @@
 <p>
 <pre>
 /**
+ * 简单初始化
+ * PS：若该dom没有初始化过carousel，则初始化
+ */
+$(".carousel").carousel();
+</pre>
+</p>
+<p>
+<pre>
+/**
+ * 带参数初始化
  * index[number] 初始化状态切换到的帧数
  * noanim[boolean] 切换过程是否需要动画
  */
-$("#carousel").carousel(index, noanim);
+$(".carousel").carousel(index, noanim);
 </pre>
 </p>
 <p>
 <pre>
 /**
  * 销毁操作
+ * PS：若该dom有初始化过carousel，则执行销毁
  */
-$("#carousel").carousel('clear');
+$(".carousel").carousel('clear');
 </pre>
 </p>
 <h4>HTML 初始化</h4>
 <p>
-```html
+<pre>
 // data-enable-circle-loop 激活`无终点`轮播方式，默认激活
 // data-enable-auto-loop 激活自动轮播，默认激活，若 enableCircleLoop=false，该项不起作用
 // data-enable-dots 激活触点导航，默认激活
@@ -43,6 +54,7 @@ $("#carousel").carousel('clear');
         <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/4/"></li>
     </ul>
 </div>
-
+</pre>
 </p>
+
 <h4>CSS <a href="https://github.com/class4cxy/Carousel/blob/master/carousel.css">carousel.css</a></h4>
