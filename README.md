@@ -42,10 +42,13 @@ $(".carousel").carousel('clear');
 <h4>HTML 初始化</h4>
 <p>
 <pre>
-// data-enable-circle-loop 激活`无终点`轮播方式，默认激活
-// data-enable-auto-loop 激活自动轮播，默认激活，若 enableCircleLoop=false，该项不起作用
-// data-enable-dots 激活触点导航，默认激活
-// data-auto-loop-duratio 自动轮播时间间隔，默认5s
+/**
+ *
+ * data-enable-circle-loop 激活`无终点`轮播方式，默认激活
+ * data-enable-auto-loop 激活自动轮播，默认激活，若 enableCircleLoop=false，该项不起作用
+ * data-enable-dots 激活触点导航，默认激活
+ * data-auto-loop-duratio 自动轮播时间间隔，默认5s
+ * /
 <div class="ui-carousel" id="carousel" data-enable-circle-loop="true" data-enable-auto-loop="true" data-enable-dots="true" data-auto-loop-duration="5000">
     <ul class="ui-carousel-inner">
         <li class="ui-carousel-item"><img width="100%" src="http://lorempixel.com/640/300/sports/1/"></li>
