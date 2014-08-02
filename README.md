@@ -1,4 +1,4 @@
-<h1>Carousel - 一个基于zetpo，定位移动端的slider组件</h1>
+<h1>Carousel - 一个基于zepto，定位移动端的slider组件</h1>
 <em>PS：取名Carousel是为了兼容早期已经投入的使用。</em>
 <ol>
 	<li><strong>支持`有终点`跟`无终点`轮播模式；</strong></li>
